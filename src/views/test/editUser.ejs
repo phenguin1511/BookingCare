@@ -1,0 +1,54 @@
+<!-- test/editUser.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit User</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2 class="text-primary">Edit User</h2>
+        <form action="/update-user" method="POST">
+            <input type="hidden" name="id" value="<%= user.id %>">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" value="<%= user.email %>" required>
+            </div>
+            <div class="mb-3">
+                <label for="firstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" name="firstName" value="<%= user.firstName %>" required>
+            </div>
+            <div class="mb-3">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" name="lastName" value="<%= user.lastName %>" required>
+            </div>
+            <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <input type="text" class="form-control" name="address" value="<%= user.address %>" required>
+            </div>
+            <div class="mb-3">
+                <label for="gender" class="form-label">Gender</label>
+                <select class="form-select" name="gender" required>
+                    <option value="true" <%=user.gender ? 'selected' : '' %>>Male</option>
+                    <option value="false" <%=!user.gender ? 'selected' : '' %>>Female</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="phonenumber" class="form-label">Phone Number</label>
+                <input type="text" class="form-control" name="phonenumber" value="<%= user.phonenumber %>" required>
+            </div>
+            <div class="mb-3">
+                <label for="roleId" class="form-label">Role ID</label>
+                <input type="text" class="form-control" name="roleId" value="<%= user.roleId %>" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update User</button>
+        </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
