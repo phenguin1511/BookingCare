@@ -13,10 +13,13 @@ let initWebRoutes = (app) => {
     router.get('/edit-user', homecontroller.getEditUser);
     router.post('/update-user', homecontroller.updateUser);
 
-    router.get('/delete-user', homecontroller.getDeleteUser);
+    router.delete('/delete-user', homecontroller.getDeleteUser);
 
-    router.get('/api/get-all-users', userController.hanldeGetAllUsers)
-    router.post('/api/login', userController.handleLogin)
+    router.get('/api/get-all-users', userController.hanldeGetAllUsers);
+    router.post('/api/login', userController.handleLogin);
+    router.post('/api/create-new-user', userController.handleCreateNewUser);
+    router.put('/api/edit-user', userController.handleEditUser);
+    router.delete('/api/delete-user', userController.handleDeleteUser);
     return app.use("/", router);
 }
 

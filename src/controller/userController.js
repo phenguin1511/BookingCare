@@ -21,7 +21,7 @@ let handleLogin = async (req, res) => {
 }
 
 let hanldeGetAllUsers = async (req, res) => {
-    let id = req.body.id;
+    let id = req.query.id;
     if (!id) {
         return res.status(500).json({
             errCode: 1,
@@ -38,7 +38,41 @@ let hanldeGetAllUsers = async (req, res) => {
     })
 }
 
+let handleCreateNewUser = async (req, res) => {
+    let message = await userService.createNewUser(req.body);
+    console.log(message);
+    return res.status(200).json(message);
+}
+
+let handleEditUser = async (req, res) => {
+    let data = req.body
+    if (!data) {
+        return res.status(200).json({
+            errCode: 1,
+            message: 'Missing required!'
+        })
+    }
+    let message = await userService.updateUserData(data);
+    return res.status(200).json(message)
+}
+
+let handleDeleteUser = async (req, res) => {
+    let id = req.body.id;
+    if (!id) {
+        return res.status(200).json({
+            errCode: 1,
+            message: 'Missing required!'
+        })
+    }
+    let message = await userService.deleteUser(id);
+    return res.status(200).json(message)
+}
+
+
 module.exports = {
     handleLogin: handleLogin,
-    hanldeGetAllUsers: hanldeGetAllUsers
+    hanldeGetAllUsers: hanldeGetAllUsers,
+    handleCreateNewUser: handleCreateNewUser,
+    handleEditUser: handleEditUser,
+    handleDeleteUser: handleDeleteUser
 }
