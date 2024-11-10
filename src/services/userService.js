@@ -94,30 +94,32 @@ let getAllUsers = (userId) => {
 }
 
 let createNewUser = (data) => {
-    return new Promise(async (resole, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             let check = await checkUserEmail(data.email);
             if (check === true) {
-                resole({
+                resolve({
                     errCode: 1,
-                    message: 'Your Email Is Already Use!!'
+                    errMessage: 'Your Email Is Already Use!!'
+                });
+            } else {
+                let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+                await db.User.create({
+                    email: data.email,
+                    password: hashPasswordFromBcrypt,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    address: data.address,
+                    gender: data.gender === '1' ? true : false,
+                    phonenumber: data.phonenumber,
+                    roleId: data.roleId,
+                })
+                resolve({
+                    errCode: 0,
+                    message: 'OK'
                 })
             }
-            let hashPasswordFromBcrypt = await hashUserPassword(data.password);
-            await db.User.create({
-                email: data.email,
-                password: hashPasswordFromBcrypt,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                address: data.address,
-                gender: data.gender === '1' ? true : false,
-                phonenumber: data.phonenumber,
-                roleId: data.roleId,
-            })
-            resole({
-                errCode: 0,
-                message: 'OK'
-            })
+
         } catch (e) {
             reject(e);
         }
@@ -155,13 +157,7 @@ let deleteUser = (id) => {
 let updateUserData = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let check = await checkUserEmail(data.email);
-            if (check === true) {
-                resolve({
-                    errCode: 3,
-                    message: 'Your Email Is Already Use!!'
-                })
-            }
+            console.log(data)
             if (!data.id) {
                 resolve({
                     errCode: 4,
@@ -196,11 +192,36 @@ let updateUserData = (data) => {
         }
     })
 }
+
+let getAllCodeService = (typeInput) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!typeInput) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Parameter!'
+                })
+            } else {
+                let res = {}
+                let allcode = await db.Allcode.findAll({
+                    where: { type: typeInput }
+                });
+                res.errCode = 0;
+                res.data = allcode
+                resolve(res);
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     handleUserLogin,
     checkUserEmail,
     getAllUsers,
     createNewUser,
     deleteUser,
-    updateUserData
+    updateUserData,
+    getAllCodeService
 };

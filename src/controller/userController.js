@@ -61,18 +61,31 @@ let handleDeleteUser = async (req, res) => {
     if (!id) {
         return res.status(200).json({
             errCode: 1,
-            message: 'Missing required!'
+            message: 'Cant find ID!'
         })
     }
     let message = await userService.deleteUser(id);
     return res.status(200).json(message)
 }
 
+let getAllCode = async (req, res) => {
+    try {
+        let data = await userService.getAllCodeService(req.query.type)
+        console.log(data)
+        return res.status(200).json(data);
 
+    } catch (error) {
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error from Server!"
+        })
+    }
+}
 module.exports = {
     handleLogin: handleLogin,
     hanldeGetAllUsers: hanldeGetAllUsers,
     handleCreateNewUser: handleCreateNewUser,
     handleEditUser: handleEditUser,
-    handleDeleteUser: handleDeleteUser
+    handleDeleteUser: handleDeleteUser,
+    getAllCode: getAllCode
 }
