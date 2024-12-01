@@ -53,6 +53,8 @@ let handleEditUser = async (req, res) => {
         })
     }
     let message = await userService.updateUserData(data);
+    console.log(message)
+
     return res.status(200).json(message)
 }
 

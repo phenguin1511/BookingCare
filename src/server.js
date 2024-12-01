@@ -9,9 +9,10 @@ require('dotenv').config();
 let app = express();
 
 // Middleware để phân tích cú pháp body của yêu cầu
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 // CORS configuration
 app.use(cors({
     origin: true, // Địa chỉ của client (React app)

@@ -2,26 +2,35 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('schedules', {
+        await queryInterface.createTable('markdowns', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER // Đảm bảo kiểu dữ liệu là INTEGER
             },
-            currentNumber: {
-                type: Sequelize.INTEGER
+            contentHTML: {
+                allowNull: false,
+                type: Sequelize.TEXT('long'),
             },
-            maxNumber: {
-                type: Sequelize.INTEGER
+            contentMarkdown: {
+                allowNull: false,
+                type: Sequelize.TEXT('long'),
             },
-            date: {
-                type: Sequelize.STRING, // Đảm bảo kiểu dữ liệu là TIMESTAMP
-            },
-            timeType: {
-                type: Sequelize.STRING
+            description: {
+                allowNull: true,
+                type: Sequelize.TEXT('long'),
             },
             doctorId: {
+                allowNull: true,
+                type: Sequelize.INTEGER
+            },
+            specialtyId: {
+                allowNull: true,
+                type: Sequelize.INTEGER
+            },
+            clinicId: {
+                allowNull: true,
                 type: Sequelize.INTEGER
             },
             createdAt: {
@@ -35,6 +44,6 @@ module.exports = {
         });
     },
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('schedules');
+        await queryInterface.dropTable('markdowns');
     }
 };

@@ -9,7 +9,7 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER // Đảm bảo kiểu dữ liệu là INTEGER
             },
-            key: {
+            keyMap: {
                 type: Sequelize.STRING,
                 allowNull: false
             },

@@ -7,13 +7,13 @@ module.exports = (sequelize, DataTypes) => {
     class Schedule extends Model {
 
         static associate(models) {
-
+            Schedule.belongsTo(models.Allcode, { foreignKey: 'timeType', targetKey: 'keyMap', as: 'timeTypeData' })
         }
     }
     Schedule.init({
         currentNumber: DataTypes.INTEGER,
         maxNumber: DataTypes.INTEGER,
-        date: DataTypes.DATE,
+        date: DataTypes.STRING, // Sử dụng TIMESTAMP
         timeType: DataTypes.STRING,
         doctorId: DataTypes.INTEGER
     }, {

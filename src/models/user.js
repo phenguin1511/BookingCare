@@ -7,7 +7,10 @@ module.exports = (sequelize, DataTypes) => {
   class User extends Model {
 
     static associate(models) {
-
+      User.belongsTo(models.Allcode, { foreignKey: 'positionId', targetKey: 'keyMap', as: 'positionData' })
+      User.belongsTo(models.Allcode, { foreignKey: 'gender', targetKey: 'keyMap', as: 'genderData' })
+      User.hasOne(models.Markdown, { foreignKey: 'doctorId' }),
+        User.hasOne(models.Doctor_Infor, { foreignKey: 'doctorId' })
     }
   }
   User.init({
@@ -16,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
     address: DataTypes.STRING,
-    gender: DataTypes.BOOLEAN,
+    gender: DataTypes.STRING,
     image: DataTypes.STRING,
     phonenumber: DataTypes.STRING,
     roleId: DataTypes.STRING,

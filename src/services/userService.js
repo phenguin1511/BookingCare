@@ -110,9 +110,11 @@ let createNewUser = (data) => {
                     firstName: data.firstName,
                     lastName: data.lastName,
                     address: data.address,
-                    gender: data.gender === '1' ? true : false,
+                    gender: data.gender,
+                    positionId: data.position,
                     phonenumber: data.phonenumber,
-                    roleId: data.roleId,
+                    roleId: data.role,
+                    image: data.avatar
                 })
                 resolve({
                     errCode: 0,
@@ -163,6 +165,7 @@ let updateUserData = (data) => {
                     errCode: 4,
                     message: 'Error!!'
                 })
+
             }
             let user = await db.User.findOne({
                 where: { id: data.id },
@@ -173,9 +176,11 @@ let updateUserData = (data) => {
                 user.firstName = data.firstName;
                 user.lastName = data.lastName;
                 user.address = data.address;
-                user.gender = data.gender === 'true'; // Chuyển đổi sang boolean
+                user.gender = data.gender; // Chuyển đổi sang boolean
                 user.phonenumber = data.phonenumber;
-                user.roleId = data.roleId;
+                user.roleId = data.role;
+                user.positionId = data.position;
+                user.image = data.avatar;
                 await user.save();
                 resolve({
                     errCode: 0,
