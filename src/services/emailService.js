@@ -24,6 +24,7 @@ let sendEmail = async (receivers) => {
 };
 
 let getBodyHTMLEmail = (receivers) => {
+    console.log(receivers)
     let result = ``;
     if (receivers.language === 'vi') {
         result =
@@ -89,7 +90,7 @@ let getBodyHTMLEmail = (receivers) => {
                             <p><strong>Giờ hẹn:</strong> ${receivers.time}</p>
                             <p><strong>Bác sĩ phụ trách:</strong> ${receivers.doctorName}</p>
                             <p>Nếu các thông tin trên là đúng sự thật, vui lòng click vào <strong>Xác Nhận</strong> dưới đây và hoàn tất thủ tục đặt lịch.</p>
-                            <a href="https://www.facebook.com/nguyenphuc1511" class="btn" target="_blank">Xác Nhận</a>
+                            <a href="${receivers.redirectLink}" class="btn" target="_blank">Xác Nhận</a>
                         </div>
                         <div class="footer">
                             <p>Xin chân thành cảm ơn!</p>
@@ -163,7 +164,7 @@ let getBodyHTMLEmail = (receivers) => {
                             <p><strong>Appointment Time:</strong> ${receivers.time}</p>
                             <p><strong>Responsible Doctor:</strong> ${receivers.doctorName}</p>
                             <p>If the above information is correct, please click on <strong>Confirm</strong> below to complete the scheduling process.</p>
-                            <a href="https://www.facebook.com/nguyenphuc1511" class="btn" target="_blank">Confirm</a>
+                            <a href="${receivers.redirectLink}" class="btn" target="_blank">Confirm</a>
                         </div>
                         <div class="footer">
                             <p>Thank you very much!</p>

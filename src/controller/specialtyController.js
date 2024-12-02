@@ -1,10 +1,11 @@
-import patientService from "../services/patientService";
+import specialtyService from "../services/specialtyService";
 
 
 
-let postBookingAppointment = async (req, res) => {
+
+let createNewSpecialty = async (req, res) => {
     try {
-        let data = await patientService.postBookingAppointment(req.body);
+        let data = await specialtyService.createNewSpecialty(req.body);
         return res.status(200).json(data)
     } catch (error) {
         console.log(error)
@@ -15,9 +16,9 @@ let postBookingAppointment = async (req, res) => {
     }
 }
 
-let postVerifyBookingAppointment = async (req, res) => {
+let getAllSpecialty = async (req, res) => {
     try {
-        let data = await patientService.postVerifyBookingAppointment(req.body);
+        let data = await specialtyService.getAllSpecialty();
         return res.status(200).json(data)
     } catch (error) {
         console.log(error)
@@ -28,6 +29,6 @@ let postVerifyBookingAppointment = async (req, res) => {
     }
 }
 module.exports = {
-    postBookingAppointment: postBookingAppointment,
-    postVerifyBookingAppointment: postVerifyBookingAppointment
+    createNewSpecialty: createNewSpecialty,
+    getAllSpecialty: getAllSpecialty
 }
