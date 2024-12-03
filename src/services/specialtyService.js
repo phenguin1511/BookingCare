@@ -1,5 +1,6 @@
 import { includes } from "lodash";
 import db from "../models"
+import { where } from "sequelize";
 
 
 let createNewSpecialty = (data) => {
@@ -63,7 +64,58 @@ let getAllSpecialty = () => {
     });
 }
 
+let getDetailSpecialtyById = (inputId, inputLocation) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inputId || !inputLocation) {
+                resolve({
+                    errCode: -1,
+                    errMessage: 'Missing Parameter!'
+                });
+            } else {
+                let whereClause = {};
+                if (inputLocation !== 'ALL') {
+                    whereClause.provinceId = inputLocation;
+                }
+
+                let data = await db.Specialty.findOne({
+                    where: { id: inputId },
+                    attributes: ['name', 'descriptionHTML', 'descriptionMarkdown'],
+                    include: [
+                        {
+                            model: db.Doctor_Infor,
+                            as: 'specialtyTypeData',
+                            where: { specialtyId: inputId, ...whereClause }, // Kết hợp các điều kiện
+                            attributes: ['doctorId', 'provinceId']
+                        }
+                    ],
+                    raw: false
+                });
+
+                if (!data) {
+                    resolve({
+                        errCode: -2,
+                        errMessage: 'No data found!',
+                        data: {}
+                    });
+                } else {
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'OK',
+                        data: data
+                    });
+                }
+            }
+        } catch (error) {
+            console.error(error); // Log lỗi để debug
+            reject(error);
+        }
+    });
+};
+
+
 module.exports = {
     createNewSpecialty: createNewSpecialty,
-    getAllSpecialty: getAllSpecialty
+    getAllSpecialty: getAllSpecialty,
+    getDetailSpecialtyById: getDetailSpecialtyById
 }

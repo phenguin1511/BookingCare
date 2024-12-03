@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     class Specialty extends Model {
 
         static associate(models) {
-
+            Specialty.hasMany(models.Doctor_Infor, { foreignKey: 'specialtyId', as: 'specialtyTypeData' });
         }
     }
     Specialty.init({

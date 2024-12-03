@@ -51,70 +51,106 @@ let getAllDoctor = () => {
     })
 }
 
+const validateInputData = (inputData) => {
+    const requiredFields = [
+        'doctorId',
+        'contentHTML',
+        'contentMarkdown',
+        'action',
+        'selectedPrice',
+        'selectedProvince',
+        'selectedPayment',
+        'nameClinic',
+        'addressClinic',
+        'note',
+        'selectedSpecialty'
+    ];
+
+    for (let field of requiredFields) {
+        if (!inputData[field]) {
+            return {
+                isValid: false,
+                errCode: 1,
+                errMessage: `Missing required parameter: ${field}`
+            };
+        }
+    }
+    return {
+        isValid: true,
+        errCode: 0,
+        errMessage: "Validation successful"
+    };
+};
+
+
 let saveInfoDoctor = (inputData) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!inputData.doctorId || !inputData.contentHTML || !inputData.contentMarkdown || !inputData.action
-                || !inputData.selectedPrice || !inputData.selectedProvince || !inputData.selectedPayment || !inputData.nameClinic || !inputData.addressClinic || !inputData.note) {
+            const validation = validateInputData(inputData);
+            if (!validation.isValid) {
                 resolve({
-                    errCode: 1,
-                    errMessage: "Missing required parameters"
+                    errCode: validation.errCode,
+                    errMessage: validation.errMessage
                 });
-            } else {
-                if (inputData.action === "CREATE") {
-                    await db.Markdown.create({
-                        contentHTML: inputData.contentHTML,
-                        contentMarkdown: inputData.contentMarkdown,
-                        description: inputData.description,
-                        doctorId: inputData.doctorId
-                    })
-                } else if (inputData.action === "EDIT") {
-                    let doctorMarkdown = await db.Markdown.findOne({
-                        where: { doctorId: inputData.doctorId },
-                        raw: false
-                    })
-                    if (doctorMarkdown) {
-                        doctorMarkdown.contentHTML = inputData.contentHTML,
-                            doctorMarkdown.contentMarkdown = inputData.contentMarkdown,
-                            doctorMarkdown.description = inputData.description,
-                            await doctorMarkdown.save();
-                    }
-                }
+                return;
+            }
 
-                let doctorInfor = await db.Doctor_Infor.findOne({
+            if (inputData.action === "CREATE") {
+                await db.Markdown.create({
+                    contentHTML: inputData.contentHTML,
+                    contentMarkdown: inputData.contentMarkdown,
+                    description: inputData.description,
+                    doctorId: inputData.doctorId,
+                });
+            } else if (inputData.action === "EDIT") {
+                let doctorMarkdown = await db.Markdown.findOne({
                     where: { doctorId: inputData.doctorId },
                     raw: false
-                })
-                if (doctorInfor) {
-                    doctorInfor.doctorId = inputData.doctorId,
-                        doctorInfor.priceId = inputData.selectedPrice,
-                        doctorInfor.provinceId = inputData.selectedProvince,
-                        doctorInfor.paymentId = inputData.selectedPayment,
-                        doctorInfor.adressClinic = inputData.addressClinic,
-                        doctorInfor.nameClinic = inputData.nameClinic,
-                        doctorInfor.note = inputData.note,
-                        await doctorInfor.save()
-                } else {
-                    await db.Doctor_Infor.create({
-                        doctorId: inputData.doctorId,
-                        priceIdId: inputData.selectedPrice,
-                        provinceId: inputData.selectedProvince,
-                        paymentId: inputData.selectedPayment,
-                        adressClinic: inputData.addressClinic,
-                        nameClinic: inputData.nameClinic,
-                        note: inputData.note,
-                    })
+                });
+                if (doctorMarkdown) {
+                    doctorMarkdown.contentHTML = inputData.contentHTML;
+                    doctorMarkdown.contentMarkdown = inputData.contentMarkdown;
+                    doctorMarkdown.description = inputData.description;
+                    await doctorMarkdown.save();
                 }
-                resolve({
-                    errCode: 0,
-                    errMessage: "Save Doctor Success!!"
-                })
             }
+
+            let doctorInfor = await db.Doctor_Infor.findOne({
+                where: { doctorId: inputData.doctorId },
+                raw: false
+            });
+            if (doctorInfor) {
+                doctorInfor.doctorId = inputData.doctorId;
+                doctorInfor.priceId = inputData.selectedPrice;
+                doctorInfor.provinceId = inputData.selectedProvince;
+                doctorInfor.paymentId = inputData.selectedPayment;
+                doctorInfor.adressClinic = inputData.addressClinic;
+                doctorInfor.nameClinic = inputData.nameClinic;
+                doctorInfor.note = inputData.note;
+                doctorInfor.specialtyId = inputData.selectedSpecialty;
+                await doctorInfor.save();
+            } else {
+                await db.Doctor_Infor.create({
+                    doctorId: inputData.doctorId,
+                    priceId: inputData.selectedPrice,
+                    provinceId: inputData.selectedProvince,
+                    paymentId: inputData.selectedPayment,
+                    adressClinic: inputData.addressClinic,
+                    nameClinic: inputData.nameClinic,
+                    note: inputData.note,
+                    specialtyId: inputData.selectedSpecialty
+                });
+            }
+
+            resolve({
+                errCode: 0,
+                errMessage: "Save Doctor Success!!"
+            });
         } catch (error) {
-            reject(error)
+            reject(error);
         }
-    })
-}
+    });
+};
 
 let getDetailDoctor = (inputId) => {
     return new Promise(async (resolve, reject) => {
