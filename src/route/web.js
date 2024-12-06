@@ -43,6 +43,7 @@ let initWebRoutes = (app) => {
     router.post('/api/verify-book-appoitment', patientController.postVerifyBookingAppointment);
 
     router.post('/api/create-new-specialty', specialtyController.createNewSpecialty);
+    router.post('/api/delete-specialty', specialtyController.deleteSpecialty);
     router.get('/api/get-all-specialty', specialtyController.getAllSpecialty);
     router.get('/api/get-detail-specialty-by-id', specialtyController.getDetailSpecialtyById);
 

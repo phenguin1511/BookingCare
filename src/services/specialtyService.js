@@ -114,8 +114,47 @@ let getDetailSpecialtyById = (inputId, inputLocation) => {
 };
 
 
+let deleteSpecialty = (inputId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inputId) {
+                resolve({
+                    errCode: -1,
+                    errMessage: 'Missing Parameter!',
+                });
+            } else {
+                console.log(`Attempting to delete specialty with ID: ${inputId}`);
+                let specialty = await db.Specialty.findOne({
+                    where: { id: inputId },
+                });
+
+                if (!specialty) {
+                    resolve({
+                        errCode: 1,
+                        errMessage: 'Specialty not found!',
+                    });
+                } else {
+                    await db.Specialty.destroy({
+                        where: { id: inputId },
+                    });
+                    console.log(`Specialty with ID: ${inputId} deleted successfully.`);
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'Delete successful!',
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error during delete:', error);
+            reject(error);
+        }
+    });
+};
+
+
 module.exports = {
     createNewSpecialty: createNewSpecialty,
     getAllSpecialty: getAllSpecialty,
-    getDetailSpecialtyById: getDetailSpecialtyById
+    getDetailSpecialtyById: getDetailSpecialtyById,
+    deleteSpecialty: deleteSpecialty
 }
