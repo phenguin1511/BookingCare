@@ -60,7 +60,53 @@ let getAllCLinic = () => {
         }
     });
 }
+
+let getDetailClinicById = (inputId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inputId) {
+                resolve({
+                    errCode: -1,
+                    errMessage: 'Missing Parameter!'
+                });
+            } else {
+
+                let data = await db.Clinic.findOne({
+                    where: { id: inputId },
+                    attributes: ['name', 'descriptionHTML', 'descriptionMarkdown'],
+                    include: [
+                        {
+                            model: db.Doctor_Infor,
+                            as: 'clinicTypeData',
+                            where: { clinicId: inputId, },
+                            attributes: ['doctorId']
+                        }
+                    ],
+                    raw: false
+                });
+
+                if (!data) {
+                    resolve({
+                        errCode: -2,
+                        errMessage: 'No data found!',
+                        data: {}
+                    });
+                } else {
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'OK',
+                        data: data
+                    });
+                }
+            }
+        } catch (error) {
+            console.error(error); // Log lỗi để debug
+            reject(error);
+        }
+    });
+}
 module.exports = {
     createNewClinic: createNewClinic,
-    getAllCLinic: getAllCLinic
+    getAllCLinic: getAllCLinic,
+    getDetailClinicById: getDetailClinicById
 }

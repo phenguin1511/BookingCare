@@ -20,6 +20,34 @@ let handleLogin = async (req, res) => {
     }
 }
 
+let handleForgotPassword = async (req, res) => {
+    try {
+        console.log(req.body)
+        let data = await userService.handleForgotPassword(req.body);
+        console.log(req.body)
+        return res.status(200).json(data)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error From Server"
+        })
+    }
+}
+
+let postVerifyPasswordUser = async (req, res) => {
+    try {
+        let data = await userService.postVerifyPasswordUser(req.body);
+        return res.status(200).json(data)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error From Server"
+        })
+    }
+}
+
 let hanldeGetAllUsers = async (req, res) => {
     let id = req.query.id;
     if (!id) {
@@ -89,5 +117,7 @@ module.exports = {
     handleCreateNewUser: handleCreateNewUser,
     handleEditUser: handleEditUser,
     handleDeleteUser: handleDeleteUser,
-    getAllCode: getAllCode
+    getAllCode: getAllCode,
+    handleForgotPassword: handleForgotPassword,
+    postVerifyPasswordUser: postVerifyPasswordUser
 }

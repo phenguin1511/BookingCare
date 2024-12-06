@@ -2,8 +2,10 @@ import { where } from "sequelize"
 import db from "../models"
 import { raw } from "body-parser"
 import _, { includes, reject } from "lodash"
+import emailService from './emailService'
 require('dotenv').config();
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
+
 
 let getTopDoctorHome = (limit) => {
     return new Promise(async (resolve, reject) => {
@@ -63,7 +65,8 @@ const validateInputData = (inputData) => {
         'nameClinic',
         'addressClinic',
         'note',
-        'selectedSpecialty'
+        'selectedSpecialty',
+        'selectedClinic'
     ];
 
     for (let field of requiredFields) {
@@ -128,6 +131,7 @@ let saveInfoDoctor = (inputData) => {
                 doctorInfor.nameClinic = inputData.nameClinic;
                 doctorInfor.note = inputData.note;
                 doctorInfor.specialtyId = inputData.selectedSpecialty;
+                doctorInfor.clinicId = inputData.selectedClinic;
                 await doctorInfor.save();
             } else {
                 await db.Doctor_Infor.create({
@@ -138,7 +142,8 @@ let saveInfoDoctor = (inputData) => {
                     adressClinic: inputData.addressClinic,
                     nameClinic: inputData.nameClinic,
                     note: inputData.note,
-                    specialtyId: inputData.selectedSpecialty
+                    specialtyId: inputData.selectedSpecialty,
+                    clinicId: inputData.clinicId
                 });
             }
 
@@ -321,6 +326,96 @@ let getExtraInfoDoctorById = (doctorId) => {
         }
     })
 }
+
+let getListPatientForDoctor = (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!doctorId && !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Parameter'
+                })
+            } else {
+                let data = await db.Booking.findAll({
+                    where: {
+                        statusId: 'S2',
+                        doctorId: doctorId,
+                        date: date
+                    },
+                    include: [
+                        {
+                            model: db.User, as: 'patientData', attributes: ['email', 'lastName', 'address', 'gender'],
+                            include: [
+                                { model: db.Allcode, as: 'genderData', attributes: ['valueEn', 'valueVn'] },
+                            ]
+                        },
+                        {
+                            model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueEn', 'valueVn'],
+                        }
+                    ],
+                    raw: false,
+                })
+                resolve({
+                    errCode: 0,
+                    errMessage: 'oke',
+                    data: data
+                })
+            }
+
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+
+let postSendRemedy = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.email || !data.doctorId || !data.patientId || !data.imgBase64 || !data.timeType) {
+                return resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Required Parameter!'
+                });
+            }
+
+            let appoitment = await db.Booking.findOne({
+                where: {
+                    doctorId: data.doctorId,
+                    patientId: data.patientId,
+                    date: data.timeType,
+                    statusId: 'S2'
+                },
+                raw: false
+            });
+
+            if (appoitment) {
+                appoitment.statusId = 'S3';
+                await appoitment.save();
+
+                // Gửi email sau khi cập nhật thành công
+                await emailService.sendEmailRemedy({
+                    email: data.email,
+                    imgBase64: data.imgBase64,
+
+                });
+
+                return resolve({
+                    errCode: 0,
+                    errMessage: 'OKE',
+                });
+            } else {
+                return resolve({
+                    errCode: 2,
+                    errMessage: 'Appointment not found!',
+                });
+            }
+        } catch (error) {
+            return reject(error);
+        }
+    });
+};
+
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctor: getAllDoctor,
@@ -328,5 +423,7 @@ module.exports = {
     getDetailDoctor: getDetailDoctor,
     createScheduleDoctor: createScheduleDoctor,
     getScheduleByDate: getScheduleByDate,
-    getExtraInfoDoctorById: getExtraInfoDoctorById
+    getExtraInfoDoctorById: getExtraInfoDoctorById,
+    getListPatientForDoctor: getListPatientForDoctor,
+    postSendRemedy: postSendRemedy
 }

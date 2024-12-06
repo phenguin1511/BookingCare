@@ -1,6 +1,8 @@
 import { where } from "sequelize";
 import db from "../models/index";
 import bcrypt from 'bcryptjs';
+import { v4 as uuidv4 } from 'uuid';
+import sendEmailForgotPassword from './emailService'
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -23,7 +25,7 @@ let handleUserLogin = (email, password) => {
             if (isExist) {
                 let user = await db.User.findOne({
                     where: { email: email },
-                    attributes: ['firstName', 'lastName', 'email', 'roleId', 'password'],
+                    attributes: ['id', 'firstName', 'lastName', 'email', 'roleId', 'password'],
                     raw: true
                 });
                 if (user) {
@@ -52,6 +54,60 @@ let handleUserLogin = (email, password) => {
         }
     });
 };
+let buildUrlEmail = (token) => {
+    let result = `${process.env.URL_REACT}/verify-booking?token=${token}`;
+    return result;
+};
+
+let handleForgotPassword = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let token = uuidv4();
+            if (!data.email) {
+                return resolve({
+                    errCode: 1,
+                    errMessage: "Missing Parameter"
+                });
+            }
+
+            // Find the user by email
+            let user = await db.User.findOne({
+                where: { email: data.email }
+            });
+            if (user) {
+
+                user.resetToken = token;
+                user.resetTokenExpiry = Date.now() + 3600000;
+                await user.save();
+
+                // Create the reset password link
+                let resetLink = buildUrlEmail(token);
+
+                await sendEmailForgotPassword({
+                    email: user.email,
+                    redirectLink: resetLink
+                });
+
+                resolve({
+                    errCode: 0,
+                    errMessage: "Password reset email sent successfully."
+                });
+            } else {
+                resolve({
+                    errCode: 2,
+                    errMessage: "User not found"
+                });
+            }
+        } catch (error) {
+            console.error('Error in handleForgotPassword:', error);
+            reject({
+                errCode: -1,
+                errMessage: "An error occurred. Please try again later."
+            });
+        }
+    });
+};
+
 
 let checkUserEmail = (email) => {
     return new Promise(async (resolve, reject) => {
@@ -228,5 +284,6 @@ module.exports = {
     createNewUser,
     deleteUser,
     updateUserData,
-    getAllCodeService
+    getAllCodeService,
+    handleForgotPassword
 };

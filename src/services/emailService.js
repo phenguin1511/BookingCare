@@ -14,7 +14,7 @@ let sendEmail = async (receivers) => {
     });
 
     let info = await transporter.sendMail({
-        from: '"Booking Care 👻" <maddison53@ethereal.email>',
+        from: '"Booking Care 👻" <lehoainguyenphuc11b3@gmail.com>',
         to: receivers.email,
         subject: "Thông Tin Đặt Lịch Khám Bệnh",
         text: `Chào ${receivers.patientName},\n\nCảm ơn bạn đã đặt lịch khám bệnh.\nNgày hẹn của bạn là: ${receivers.date}\nGiờ hẹn: ${receivers.time}\n\nTrân trọng,\nBác sĩ phụ trách ${receivers.doctorName}`,
@@ -177,6 +177,96 @@ let getBodyHTMLEmail = (receivers) => {
     return result;
 }
 
+
+let sendEmailForgotPassword = async (receivers) => {
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false, // Use true for port 465 with SSL
+        auth: {
+            user: process.env.EMAIL_APP, // Your email address
+            pass: process.env.EMAIL_APP_PASSWORD, // Your email password or an app-specific password
+        },
+    });
+
+    // Email content with template literals
+    let info = await transporter.sendMail({
+        from: '"Booking Care 👻" <your-email@example.com>', // Update this with your verified email
+        to: receivers.email,
+        subject: "Xác Nhận Thông Tin Tài Khoản",
+        text: `Hãy Nhấn Vào Đường Link Dưới Để Xác Nhận`,
+        html: `
+            <div>
+                <p>Hãy Nhấn Vào Đường Link Dưới Để Xác Nhận</p>
+                <a href="${receivers.redirectLink}" class="btn" target="_blank">Confirm</a>
+            </div>
+        `
+    });
+
+    console.log('Email sent:', info.response);
+};
+
+
+let sendEmailRemedy = async (data) => {
+    try {
+        let transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_APP,
+                pass: process.env.EMAIL_APP_PASSWORD,
+            },
+        });
+
+        await transporter.sendMail({
+            from: '"Booking Care 👻" <lehoainguyenphuc11b3@gmail.com>',
+            to: data.email,
+            subject: "Kết Quả Đặt Lịch Khám Bệnh",
+            html: getBodyHTMLSendRemedy(data),
+            attachments: [
+                {
+                    filename: 'medical-result.png',
+                    content: data.imgBase64.split("base64,")[1],
+                    encoding: 'base64'
+                },
+            ],
+        });
+
+        console.log(`Email sent to ${data.email}`);
+    } catch (error) {
+        console.error("Error sending email:", error.message);
+        throw new Error("Failed to send email.");
+    }
+};
+
+
+let getBodyHTMLSendRemedy = (data) => {
+    return `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <div style="background-color: #4CAF50; color: #fff; padding: 20px; text-align: center;">
+                <h1 style="margin: 0; font-size: 24px;">Kết Quả Đặt Lịch Khám Bệnh</h1>
+            </div>
+            <div style="padding: 20px;">
+                <p>Xin chào <strong>Bạn</strong>,</p>
+                <p>Dưới đây là thông tin kết quả khám bệnh của bạn<strong>Booking Care</strong>.</p>
+                <div style="background-color: #f9f9f9; padding: 15px; border: 1px solid #eee; border-radius: 5px; margin: 20px 0;">
+                    <h2 style="margin: 0 0 10px 0; color: #4CAF50;">Thông tin lịch hẹn</h2>
+                    <p><strong>Ngày:</strong> </p>
+                    <p><strong>Giờ:</strong></p>
+                    <p><strong>Bác sĩ phụ trách:</strong> </p>
+                </div>
+                <p style="margin: 0;">Cám ơn bạn đã sử dụng hệ thống đặt lịch của chúng tôi!.</p>
+            </div>
+            <div style="background-color: #4CAF50; color: #fff; text-align: center; padding: 15px; margin-top: 20px;">
+                <p style="margin: 0; font-size: 14px;">Trân trọng,<br><strong>Hệ thống Booking Care</strong></p>
+            </div>
+        </div>
+    `;
+};
+
 module.exports = {
-    sendEmail
+    sendEmail,
+    sendEmailForgotPassword,
+    sendEmailRemedy
 }

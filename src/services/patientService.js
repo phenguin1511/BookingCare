@@ -8,7 +8,8 @@ let postBookingAppointment = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             let token = uuidv4();
-            if (!data || !data.email) {
+            if (!data || !data.email || !data.doctorId || !data.timeType
+                || !data.date || !data.fullName || !data.gender || !data.reason || !data.address) {
                 resolve({
                     errCode: -1,
                     errMessage: 'Missing or invalid email parameter!',
@@ -20,7 +21,10 @@ let postBookingAppointment = (data) => {
                 where: { email: data.email },
                 defaults: {
                     email: data.email,
-                    roleId: 'R3'
+                    roleId: 'R3',
+                    address: data.address,
+                    gender: data.gender,
+                    lastName: data.fullName
                 }
             });
 
@@ -29,7 +33,8 @@ let postBookingAppointment = (data) => {
                 let [booking, bookingCreated] = await db.Booking.findOrCreate({
                     where: {
                         patientId: user.id,
-                        timeType: data.timeType
+                        timeType: data.timeType,
+                        date: data.date
                     },
                     defaults: {
                         statusId: 'S1',
