@@ -35,6 +35,19 @@ let handleForgotPassword = async (req, res) => {
     }
 }
 
+let handleChangePassword = async (req, res) => {
+    try {
+        const response = await userService.handleChangePassword(req.body);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.error('Error in handleChangePassword controller:', error);
+        return res.status(500).json({
+            errCode: -1,
+            errMessage: 'Internal server error',
+        });
+    }
+};
+
 let postVerifyPasswordUser = async (req, res) => {
     try {
         let data = await userService.postVerifyPasswordUser(req.body);
@@ -119,5 +132,6 @@ module.exports = {
     handleDeleteUser: handleDeleteUser,
     getAllCode: getAllCode,
     handleForgotPassword: handleForgotPassword,
-    postVerifyPasswordUser: postVerifyPasswordUser
+    postVerifyPasswordUser: postVerifyPasswordUser,
+    handleChangePassword: handleChangePassword
 }

@@ -182,30 +182,29 @@ let sendEmailForgotPassword = async (receivers) => {
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
-        secure: false, // Use true for port 465 with SSL
+        secure: false,
         auth: {
-            user: process.env.EMAIL_APP, // Your email address
-            pass: process.env.EMAIL_APP_PASSWORD, // Your email password or an app-specific password
+            user: process.env.EMAIL_APP,
+            pass: process.env.EMAIL_APP_PASSWORD,
         },
     });
 
-    // Email content with template literals
     let info = await transporter.sendMail({
-        from: '"Booking Care 👻" <your-email@example.com>', // Update this with your verified email
+        from: '"Booking Care 👻" <your-email@example.com>',
         to: receivers.email,
-        subject: "Xác Nhận Thông Tin Tài Khoản",
-        text: `Hãy Nhấn Vào Đường Link Dưới Để Xác Nhận`,
+        subject: "Đây Là Mật Khẩu Mới Của Bạn",
+        text: `Mật khẩu mới của bạn là: ${receivers.newPassword}`,
         html: `
             <div>
-                <p>Hãy Nhấn Vào Đường Link Dưới Để Xác Nhận</p>
-                <a href="${receivers.redirectLink}" class="btn" target="_blank">Confirm</a>
+                <p>Xin Chào Bạn!</p>
+                <p>Mật khẩu mới của bạn là: <strong>${receivers.newPassword}</strong></p>
+                <p>Vui lòng đăng nhập và thay đổi mật khẩu sau khi vào hệ thống.</p>
             </div>
         `
     });
 
     console.log('Email sent:', info.response);
 };
-
 
 let sendEmailRemedy = async (data) => {
     try {

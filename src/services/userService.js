@@ -2,7 +2,7 @@ import { where } from "sequelize";
 import db from "../models/index";
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
-import sendEmailForgotPassword from './emailService'
+import { sendEmailForgotPassword } from './emailService'
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -54,40 +54,30 @@ let handleUserLogin = (email, password) => {
         }
     });
 };
-let buildUrlEmail = (token) => {
-    let result = `${process.env.URL_REACT}/verify-booking?token=${token}`;
-    return result;
-};
-
-let handleForgotPassword = (data) => {
+let handleForgotPassword = async (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let token = uuidv4();
             if (!data.email) {
                 return resolve({
                     errCode: 1,
                     errMessage: "Missing Parameter"
                 });
             }
-
-            // Find the user by email
             let user = await db.User.findOne({
                 where: { email: data.email }
             });
             if (user) {
-
-                user.resetToken = token;
-                user.resetTokenExpiry = Date.now() + 3600000;
-                await user.save();
-
-                // Create the reset password link
-                let resetLink = buildUrlEmail(token);
+                let newPassword = 'newpassword' + Math.floor(10000 + Math.random() * 90000);
+                let hashedPassword = await hashUserPassword(newPassword);
+                await db.User.update(
+                    { password: hashedPassword },
+                    { where: { email: data.email } }
+                );
 
                 await sendEmailForgotPassword({
                     email: user.email,
-                    redirectLink: resetLink
+                    newPassword: newPassword
                 });
-
                 resolve({
                     errCode: 0,
                     errMessage: "Password reset email sent successfully."
@@ -107,6 +97,48 @@ let handleForgotPassword = (data) => {
         }
     });
 };
+
+
+let handleChangePassword = async (data) => {
+    try {
+        const { email, currentPassword, newPassword } = data;
+        // Remove raw: true to get an instance of the model
+        const user = await db.User.findOne({
+            where: { email },
+            raw: false
+        });
+
+
+        if (!user) {
+            return {
+                errCode: 1,
+                errMessage: 'User not found.',
+            };
+        }
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return {
+                errCode: 2,
+                errMessage: 'Current password is incorrect.',
+            };
+        }
+
+        const hashedNewPassword = await hashUserPassword(newPassword)
+        user.password = hashedNewPassword;
+        await user.save();
+        return {
+            errCode: 0,
+            errMessage: 'Password changed successfully.',
+        };
+    } catch (error) {
+        console.error('Error changing password:', error);
+        return {
+            errCode: -1,
+            errMessage: 'Error from server.',
+        };
+    }
+};
+
 
 
 let checkUserEmail = (email) => {
@@ -285,5 +317,6 @@ module.exports = {
     deleteUser,
     updateUserData,
     getAllCodeService,
-    handleForgotPassword
+    handleForgotPassword,
+    handleChangePassword
 };
