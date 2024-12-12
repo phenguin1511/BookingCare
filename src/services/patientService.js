@@ -34,7 +34,8 @@ let postBookingAppointment = (data) => {
                     where: {
                         patientId: user.id,
                         timeType: data.timeType,
-                        date: data.date
+                        date: data.date,
+                        doctorId: data.doctorId
                     },
                     defaults: {
                         statusId: 'S1',
@@ -42,6 +43,7 @@ let postBookingAppointment = (data) => {
                         patientId: user.id,
                         date: data.date,
                         timeType: data.timeType,
+                        reason: data.reason,
                         token: token
                     }
                 });
@@ -115,7 +117,57 @@ let postVerifyBookingAppointment = (data) => {
         }
     })
 }
+
+let getListBookingForPatientByEmail = (email) => {
+    console.log(email)
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!email) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Parameter!'
+                })
+            } else {
+                let data = await db.User.findAll({
+                    where: {
+                        email: email,
+                        roleId: 'R3'
+                    },
+                    attributes: ['firstName', 'lastName'],
+                    include: [
+                        {
+                            model: db.Booking, as: 'patientData', attributes: ['date', 'timeType', 'statusId', 'doctorId'],
+                            include: [
+                                // { model: db.Allcode, as: 'dateTypeDataPatient', attributes: ['valueEn', 'valueVn'] },
+                                { model: db.Allcode, as: 'timeTypeDataPatient', attributes: ['valueEn', 'valueVn'] },
+                                { model: db.Allcode, as: 'statusTypeDataPatient', attributes: ['valueEn', 'valueVn'] },
+                                { model: db.User, as: 'doctorDataBooking', attributes: ['firstName', 'lastName'] },
+                            ]
+                        },
+
+                    ],
+                    raw: false
+                })
+                if (!data) {
+                    resolve({
+                        errCode: 2,
+                        errMessage: 'Data not found!'
+                    })
+                } else {
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'Oke',
+                        data
+                    })
+                }
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     postBookingAppointment: postBookingAppointment,
-    postVerifyBookingAppointment
+    postVerifyBookingAppointment,
+    getListBookingForPatientByEmail
 }

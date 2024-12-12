@@ -370,9 +370,12 @@ let getListPatientForDoctor = (doctorId, date) => {
 
 
 let postSendRemedy = (data) => {
+    console.log(data)
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.email || !data.doctorId || !data.patientId || !data.imgBase64 || !data.timeType) {
+            if (!data.email || !data.doctorId || !data.patientId || !data.imgBase64 || !data.timeType ||
+                !data.medicines
+            ) {
                 return resolve({
                     errCode: 1,
                     errMessage: 'Missing Required Parameter!'
@@ -397,7 +400,9 @@ let postSendRemedy = (data) => {
                 await emailService.sendEmailRemedy({
                     email: data.email,
                     imgBase64: data.imgBase64,
-
+                    medicines: data.medicines,
+                    revisitDate: data.revisitDate,
+                    note: data.note
                 });
 
                 return resolve({
@@ -416,6 +421,37 @@ let postSendRemedy = (data) => {
     });
 };
 
+let deleteBookingPatient = (inputId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inputId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Parameter'
+                })
+            } else {
+                let result = await db.Booking.destroy({
+                    where: { id: inputId }
+                });
+                if (result) {
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'oke',
+                    })
+                } else {
+                    resolve({
+                        errCode: 2,
+                        errMessage: 'Error',
+                    })
+                }
+
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctor: getAllDoctor,
@@ -425,5 +461,6 @@ module.exports = {
     getScheduleByDate: getScheduleByDate,
     getExtraInfoDoctorById: getExtraInfoDoctorById,
     getListPatientForDoctor: getListPatientForDoctor,
-    postSendRemedy: postSendRemedy
+    postSendRemedy: postSendRemedy,
+    deleteBookingPatient: deleteBookingPatient
 }

@@ -128,6 +128,20 @@ let postSendRemedy = async (req, res) => {
         })
     }
 }
+
+let deleteBookingPatient = async (req, res) => {
+    try {
+
+        let response = await doctorService.deleteBookingPatient(req.query.id);
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error From Server"
+        })
+    }
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctor: getAllDoctor,
@@ -137,5 +151,6 @@ module.exports = {
     getScheduleByDate: getScheduleByDate,
     getExtraInfoDoctorById: getExtraInfoDoctorById,
     getListPatientForDoctor: getListPatientForDoctor,
-    postSendRemedy: postSendRemedy
+    postSendRemedy: postSendRemedy,
+    deleteBookingPatient: deleteBookingPatient
 }

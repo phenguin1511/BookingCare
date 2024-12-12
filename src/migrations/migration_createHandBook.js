@@ -2,33 +2,30 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('booking', {
+        await queryInterface.createTable('handbooks', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER // Đảm bảo kiểu dữ liệu là INTEGER
             },
-            statusId: {
-                type: Sequelize.STRING
+            title: {
+                type: Sequelize.STRING,
             },
-            doctorId: {
-                type: Sequelize.INTEGER
+            child_title: {
+                type: Sequelize.STRING,
             },
-            patientId: {
-                type: Sequelize.INTEGER
+            address: {
+                type: Sequelize.STRING,
             },
-            date: {
-                type: Sequelize.STRING
+            descriptionMarkdown: {
+                type: Sequelize.TEXT,
             },
-            timeType: {
-                type: Sequelize.STRING
+            descriptionHTML: {
+                type: Sequelize.TEXT,
             },
-            token: {
-                type: Sequelize.STRING
-            },
-            reason: {
-                type: Sequelize.TEXT
+            image: {
+                type: Sequelize.BLOB('long')
             },
             createdAt: {
                 allowNull: false,
@@ -41,6 +38,6 @@ module.exports = {
         });
     },
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('booking');
+        await queryInterface.dropTable('handbooks');
     }
 };

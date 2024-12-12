@@ -241,6 +241,14 @@ let sendEmailRemedy = async (data) => {
 
 
 let getBodyHTMLSendRemedy = (data) => {
+    // Kiểm tra nếu ngày tái khám không được cung cấp
+    const revisitDate = data.revisitDate ? data.revisitDate : "Không";
+
+    // Tạo nội dung danh sách thuốc từ mảng `medicines`
+    const medicinesHtml = data.medicines.map(medicine => {
+        return `<p><strong>Tên thuốc:</strong> ${medicine.name} ||  ${medicine.dosage} /Ngày</p>`;
+    }).join('');
+
     return `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
             <div style="background-color: #4CAF50; color: #fff; padding: 20px; text-align: center;">
@@ -250,10 +258,13 @@ let getBodyHTMLSendRemedy = (data) => {
                 <p>Xin chào <strong>Bạn</strong>,</p>
                 <p>Dưới đây là thông tin kết quả khám bệnh của bạn<strong>Booking Care</strong>.</p>
                 <div style="background-color: #f9f9f9; padding: 15px; border: 1px solid #eee; border-radius: 5px; margin: 20px 0;">
-                    <h2 style="margin: 0 0 10px 0; color: #4CAF50;">Thông tin lịch hẹn</h2>
-                    <p><strong>Ngày:</strong> </p>
-                    <p><strong>Giờ:</strong></p>
-                    <p><strong>Bác sĩ phụ trách:</strong> </p>
+                    <h2 style="margin: 0 0 10px 0; color: #4CAF50;">Kết Quả Khám Bệnh</h2>
+                    <p><strong>Tái khám:</strong> ${revisitDate}</p>
+                    <div>
+                        <h3 style="color: #4CAF50;">Danh sách thuốc:</h3>
+                        ${medicinesHtml}
+                    </div>
+                    <p><strong>Ghi Chú: ${data.note}</strong></p>
                 </div>
                 <p style="margin: 0;">Cám ơn bạn đã sử dụng hệ thống đặt lịch của chúng tôi!.</p>
             </div>
@@ -263,6 +274,7 @@ let getBodyHTMLSendRemedy = (data) => {
         </div>
     `;
 };
+
 
 module.exports = {
     sendEmail,
