@@ -32,7 +32,7 @@ let postBookingAppointment = (data) => {
                 // Tìm hoặc tạo lịch hẹn
                 let [booking, bookingCreated] = await db.Booking.findOrCreate({
                     where: {
-                        patientId: user.id,
+                        // patientId: user.id,
                         timeType: data.timeType,
                         date: data.date,
                         doctorId: data.doctorId
@@ -59,7 +59,7 @@ let postBookingAppointment = (data) => {
                         time: data.timeString,
                         doctorName: data.doctorName,
                         date: data.dateString,
-                        email: 'lehoainguyenphuc11b3@gmail.com',
+                        email: data.email,
                         redirectLink: buildUrlEmail(data.doctorId, token),
                         language: data.language
                     });

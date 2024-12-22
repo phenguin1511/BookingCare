@@ -51,9 +51,24 @@ let postSaveInfoHandBook = async (req, res) => {
         })
     }
 }
+
+let deleteHandBook = async (req, res) => {
+    try {
+        let data = await handBookService.deleteHandBook(req.query.id);
+        return res.status(200).json(data)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error From Server"
+        })
+    }
+}
+
 module.exports = {
     createNewHandBook: createNewHandBook,
     getAllHandBook: getAllHandBook,
     getInfoHandBookById: getInfoHandBookById,
-    postSaveInfoHandBook: postSaveInfoHandBook
+    postSaveInfoHandBook: postSaveInfoHandBook,
+    deleteHandBook: deleteHandBook
 }

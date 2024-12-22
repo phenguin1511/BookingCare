@@ -1,4 +1,6 @@
 import userService from "../services/userService";
+import jwt from 'jsonwebtoken';
+require('dotenv').config();
 
 let handleLogin = async (req, res) => {
     let email = req.body.email;
@@ -8,17 +10,35 @@ let handleLogin = async (req, res) => {
         return res.status(500).json({
             errCode: 1,
             message: 'Missing Inputs Parameter!'
-        })
-    } else {
-        let userData = await userService.handleUserLogin(email, password);
-        return res.status(200).json({
-            errCode: userData.errCode,
-            errMessage: userData.errMessage,
-            user: userData.user ? userData.user : {}
-
-        })
+        });
     }
-}
+
+    let userData = await userService.handleUserLogin(email, password);
+    if (userData.errCode === 0) {
+        const token = jwt.sign(
+            {
+                id: userData.user.id,
+                email: userData.user.email,
+                role: userData.user.roleId
+            },
+            process.env.KEY,
+            { expiresIn: '1h' }
+        );
+        console.log(token)
+        return res.status(200).json({
+            errCode: 0,
+            message: 'Login successful!',
+            token: token,
+            user: userData.user
+        });
+    }
+
+    return res.status(200).json({
+        errCode: userData.errCode,
+        message: userData.errMessage
+    });
+};
+
 
 let handleForgotPassword = async (req, res) => {
     try {

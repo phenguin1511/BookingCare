@@ -67,7 +67,7 @@ let getAllSpecialty = () => {
 let getDetailSpecialtyById = (inputId, inputLocation) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!inputId || !inputLocation) {
+            if (!inputId) {
                 resolve({
                     errCode: -1,
                     errMessage: 'Missing Parameter!'
@@ -85,7 +85,8 @@ let getDetailSpecialtyById = (inputId, inputLocation) => {
                         {
                             model: db.Doctor_Infor,
                             as: 'specialtyTypeData',
-                            where: { specialtyId: inputId, ...whereClause }, // Kết hợp các điều kiện
+                            required: false, // Chuyển từ INNER JOIN sang LEFT JOIN
+                            where: { specialtyId: inputId, ...whereClause },
                             attributes: ['doctorId', 'provinceId']
                         }
                     ],
@@ -112,6 +113,7 @@ let getDetailSpecialtyById = (inputId, inputLocation) => {
         }
     });
 };
+
 
 
 let deleteSpecialty = (inputId) => {

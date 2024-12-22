@@ -145,9 +145,44 @@ let postSaveInfoHandBook = (data) => {
         }
     });
 }
+
+let deleteHandBook = (inputId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            if (!inputId) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing Parameter!'
+                })
+            } else {
+                let data = await db.HandBook.findOne({
+                    where: { id: inputId },
+                    raw: false
+                });
+
+                if (!data) {
+                    resolve({
+                        errCode: -2,
+                        errMessage: 'No data found!',
+                    });
+                } else {
+                    await data.destroy();
+                    resolve({
+                        errCode: 0,
+                        errMessage: 'Delete successful!',
+                    });
+                }
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 module.exports = {
     createNewHandBook: createNewHandBook,
     getAllHandBook: getAllHandBook,
     getInfoHandBookById: getInfoHandBookById,
-    postSaveInfoHandBook: postSaveInfoHandBook
+    postSaveInfoHandBook: postSaveInfoHandBook,
+    deleteHandBook: deleteHandBook
 }
