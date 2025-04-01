@@ -370,7 +370,6 @@ let getListPatientForDoctor = (doctorId, date) => {
 
 
 let postSendRemedy = (data) => {
-    console.log(data)
     return new Promise(async (resolve, reject) => {
         try {
             if (!data.email || !data.doctorId || !data.patientId || !data.imgBase64 || !data.timeType ||

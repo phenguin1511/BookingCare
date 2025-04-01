@@ -247,7 +247,6 @@ let deleteUser = (id) => {
 let updateUserData = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log(data)
             if (!data.id) {
                 resolve({
                     errCode: 4,

@@ -17,7 +17,6 @@ let createNewSpecialty = async (req, res) => {
 }
 let deleteSpecialty = async (req, res) => {
     try {
-        console.log(req.query.id)
         let data = await specialtyService.deleteSpecialty(req.query.id);
         return res.status(200).json(data)
     } catch (error) {
@@ -44,7 +43,6 @@ let getAllSpecialty = async (req, res) => {
 
 let getDetailSpecialtyById = async (req, res) => {
     try {
-        console.log(req.query)
         let data = await specialtyService.getDetailSpecialtyById(req.query.id, req.query.location);
         return res.status(200).json(data)
     } catch (error) {
@@ -58,7 +56,6 @@ let getDetailSpecialtyById = async (req, res) => {
 
 let getInfoSpecialtyById = async (req, res) => {
     try {
-        console.log(req.query)
         let data = await specialtyService.getInfoSpecialtyById(req.query.id);
         return res.status(200).json(data)
     } catch (error) {

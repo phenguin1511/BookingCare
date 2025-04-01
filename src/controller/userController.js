@@ -24,7 +24,6 @@ let handleLogin = async (req, res) => {
             process.env.KEY,
             { expiresIn: '1h' }
         );
-        console.log(token)
         return res.status(200).json({
             errCode: 0,
             message: 'Login successful!',
@@ -42,9 +41,7 @@ let handleLogin = async (req, res) => {
 
 let handleForgotPassword = async (req, res) => {
     try {
-        console.log(req.body)
         let data = await userService.handleForgotPassword(req.body);
-        console.log(req.body)
         return res.status(200).json(data)
     } catch (error) {
         console.log(error)
@@ -91,7 +88,6 @@ let hanldeGetAllUsers = async (req, res) => {
         })
     }
     let users = await userService.getAllUsers(id);
-    console.log(users);
     return res.status(200).json({
         errCode: 0,
         errMessage: 'oke',
@@ -101,7 +97,6 @@ let hanldeGetAllUsers = async (req, res) => {
 
 let handleCreateNewUser = async (req, res) => {
     let message = await userService.createNewUser(req.body);
-    console.log(message);
     return res.status(200).json(message);
 }
 
@@ -114,7 +109,6 @@ let handleEditUser = async (req, res) => {
         })
     }
     let message = await userService.updateUserData(data);
-    console.log(message)
 
     return res.status(200).json(message)
 }
@@ -134,7 +128,6 @@ let handleDeleteUser = async (req, res) => {
 let getAllCode = async (req, res) => {
     try {
         let data = await userService.getAllCodeService(req.query.type)
-        console.log(data)
         return res.status(200).json(data);
 
     } catch (error) {

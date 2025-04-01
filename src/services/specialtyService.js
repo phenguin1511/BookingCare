@@ -39,7 +39,6 @@ let getAllSpecialty = () => {
     return new Promise(async (resolve, reject) => {
         try {
             let data = await db.Specialty.findAll();
-            console.log(data);
             if (data && data.length > 0) {
                 data = data.map(item => {
                     if (item.image) {
@@ -85,7 +84,7 @@ let getDetailSpecialtyById = (inputId, inputLocation) => {
                         {
                             model: db.Doctor_Infor,
                             as: 'specialtyTypeData',
-                            required: false, // Chuyển từ INNER JOIN sang LEFT JOIN
+                            required: false,
                             where: { specialtyId: inputId, ...whereClause },
                             attributes: ['doctorId', 'provinceId']
                         }
@@ -125,7 +124,6 @@ let deleteSpecialty = (inputId) => {
                     errMessage: 'Missing Parameter!',
                 });
             } else {
-                console.log(`Attempting to delete specialty with ID: ${inputId}`);
                 let specialty = await db.Specialty.findOne({
                     where: { id: inputId },
                 });
@@ -139,7 +137,6 @@ let deleteSpecialty = (inputId) => {
                     await db.Specialty.destroy({
                         where: { id: inputId },
                     });
-                    console.log(`Specialty with ID: ${inputId} deleted successfully.`);
                     resolve({
                         errCode: 0,
                         errMessage: 'Delete successful!',

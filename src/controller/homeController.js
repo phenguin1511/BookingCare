@@ -21,7 +21,6 @@ let getAboutPage = (req, res) => {
 
 let postCRUD = async (req, res) => {
     let messsage = await CRUDService.createNewUser(req.body);
-    console.log(messsage);
     return res.send('POST CRUD from Server')
 }
 

@@ -32,7 +32,7 @@ const authenticate = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, secretKey);
-        req.user = decoded; // Gán thông tin user vào request
+        req.user = decoded;
         next();
     } catch (error) {
         return res.status(401).json({

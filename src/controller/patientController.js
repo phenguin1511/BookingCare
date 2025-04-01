@@ -30,7 +30,6 @@ let postVerifyBookingAppointment = async (req, res) => {
 
 let getListBookingForPatientByEmail = async (req, res) => {
     try {
-        console.log(req.query.email)
         let data = await patientService.getListBookingForPatientByEmail(req.query.email);
         return res.status(200).json(data)
     } catch (error) {

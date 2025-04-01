@@ -16,7 +16,6 @@ let postBookingAppointment = (data) => {
                     data: data
                 });
             }
-            console.log(data)
             let [user, userCreated] = await db.User.findOrCreate({
                 where: { email: data.email },
                 defaults: {
@@ -119,7 +118,6 @@ let postVerifyBookingAppointment = (data) => {
 }
 
 let getListBookingForPatientByEmail = (email) => {
-    console.log(email)
     return new Promise(async (resolve, reject) => {
         try {
             if (!email) {

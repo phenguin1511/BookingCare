@@ -14,7 +14,7 @@ let sendEmail = async (receivers) => {
     });
 
     let info = await transporter.sendMail({
-        from: '"Booking Care 👻" <lehoainguyenphuc11b3@gmail.com>',
+        from: '"Bệnh Viện Đa Khoa Hi Hi" <lehoainguyenphuc11b3@gmail.com>',
         to: receivers.email,
         subject: "Thông Tin Đặt Lịch Khám Bệnh",
         text: `Chào ${receivers.patientName},\n\nCảm ơn bạn đã đặt lịch khám bệnh.\nNgày hẹn của bạn là: ${receivers.date}\nGiờ hẹn: ${receivers.time}\n\nTrân trọng,\nBác sĩ phụ trách ${receivers.doctorName}`,
@@ -24,7 +24,6 @@ let sendEmail = async (receivers) => {
 };
 
 let getBodyHTMLEmail = (receivers) => {
-    console.log(receivers)
     let result = ``;
     if (receivers.language === 'vi') {
         result =
@@ -190,7 +189,7 @@ let sendEmailForgotPassword = async (receivers) => {
     });
 
     let info = await transporter.sendMail({
-        from: '"Booking Care 👻" <your-email@example.com>',
+        from: '"Bệnh Viện Đa Khoa Hi Hi" <your-email@example.com>',
         to: receivers.email,
         subject: "Đây Là Mật Khẩu Mới Của Bạn",
         text: `Mật khẩu mới của bạn là: ${receivers.newPassword}`,
@@ -203,7 +202,7 @@ let sendEmailForgotPassword = async (receivers) => {
         `
     });
 
-    console.log('Email sent:', info.response);
+
 };
 
 let sendEmailRemedy = async (data) => {
@@ -219,7 +218,7 @@ let sendEmailRemedy = async (data) => {
         });
 
         await transporter.sendMail({
-            from: '"Booking Care 👻" <lehoainguyenphuc11b3@gmail.com>',
+            from: '"Bệnh Viện Đa Khoa Hi Hi" <lehoainguyenphuc11b3@gmail.com>',
             to: data.email,
             subject: "Kết Quả Đặt Lịch Khám Bệnh",
             html: getBodyHTMLSendRemedy(data),
@@ -232,7 +231,6 @@ let sendEmailRemedy = async (data) => {
             ],
         });
 
-        console.log(`Email sent to ${data.email}`);
     } catch (error) {
         console.error("Error sending email:", error.message);
         throw new Error("Failed to send email.");
@@ -241,10 +239,8 @@ let sendEmailRemedy = async (data) => {
 
 
 let getBodyHTMLSendRemedy = (data) => {
-    // Kiểm tra nếu ngày tái khám không được cung cấp
     const revisitDate = data.revisitDate ? data.revisitDate : "Không";
 
-    // Tạo nội dung danh sách thuốc từ mảng `medicines`
     const medicinesHtml = data.medicines.map(medicine => {
         return `<p><strong>Tên thuốc:</strong> ${medicine.name} ||  ${medicine.dosage} /Ngày</p>`;
     }).join('');

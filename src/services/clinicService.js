@@ -118,7 +118,6 @@ let deleteClinic = (inputId) => {
                     errMessage: 'Missing Parameter!',
                 });
             } else {
-                console.log(`Attempting to delete Clinic with ID: ${inputId}`);
                 let clinic = await db.Clinic.findOne({
                     where: { id: inputId },
                 });
@@ -132,7 +131,6 @@ let deleteClinic = (inputId) => {
                     await db.Clinic.destroy({
                         where: { id: inputId },
                     });
-                    console.log(`Clinic with ID: ${inputId} deleted successfully.`);
                     resolve({
                         errCode: 0,
                         errMessage: 'Delete successful!',
